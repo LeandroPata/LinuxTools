@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+
+if [ "$HOME" = "/root" ]
+then
+USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else 
+USER_HOME=$HOME
+echo -e "${RED}Some configs may require root permission to backup${NC}\n"
+fi
+
+DEST_FOLDER="$USER_HOME/Dev/Linux/Config"
+
+# Backing up configs
+echo -e "${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
+
+cp "$USER_HOME"/.config/fastfetch/config.jsonc "$DEST_FOLDER"/config.jsonc
+cp "$USER_HOME"/.config/kitty/kitty.conf "$DEST_FOLDER"/kitty.conf
+cp /etc/locale.conf "$DEST_FOLDER"/locale.conf
+cp /etc/dracut.conf.d/myflags.conf "$DEST_FOLDER"/myflags.conf
+cp "$USER_HOME"/.config/ohmyposh/myprofile.yaml "$DEST_FOLDER"/myprofile.yaml
+# The dot is removed for the file to not be hidden
+cp "$USER_HOME"/.zshrc "$DEST_FOLDER"/zshrc
+
+echo -e "\n${GREEN}Finished backing up configs${NC}\n"

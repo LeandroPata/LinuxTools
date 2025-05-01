@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Clean journal
+echo -e "${BLUE}Cleaning journal${NC}\n"
+journalctl --vacuum-time=4weeks
+echo -e "\n${GREEN}Finished cleaning journal${NC}\n"
+
+# Clean cache
+echo -e "\n${BLUE}Cleaning cache${NC}\n"
+paccache -r
+echo -e "\n${GREEN}Finished cleaning cache${NC}\n"
+
+# Remove uninstalled packages
+echo -e "\n${BLUE}Removing uninstalled packages${NC}\n"
+paccache -ruk0
+echo -e "\n${GREEN}Removed uninstalled packages${NC}\n"
+
+# Remove orphans
+echo -e "\n${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITELY INSTALL TO KEEP THEM${NC}\n"
+pacman -Qdtq > orphanPackages.txt
+echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
+pacman -Rns "$(pacman -Qdtq)"
+echo -e "\n${GREEN}Finished cleaning${NC}"
+
