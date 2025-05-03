@@ -1,30 +1,46 @@
 #!/usr/bin/env bash
+# The intention is to make this into a cronjob or systemd timer to run periodically
+# This script is a short-term solution
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-
-if [ "$HOME" = "/root" ]
-then
-USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
-else 
-USER_HOME=$HOME
-echo -e "${RED}Some configs may require root permission to backup${NC}\n"
+if [ "$HOME" = "/root" ]; then
+  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else
+  USER_HOME=$HOME
+  echo -e "${RED}Some configs may require root permission to backup${NC}\n"
 fi
+
+CONFIGS=(
+  "$USER_HOME/.config/fastfetch/config.jsonc"
+  "$USER_HOME/.config/kitty/kitty.conf"
+  "/etc/locale.conf"
+  "/etc/dracut.conf.d/myflags.conf"
+  "$USER_HOME/.config/ohmyposh/myprofile.yaml"
+  "$USER_HOME/.zshrc"
+)
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config"
 
-# Backing up configs
-echo -e "${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
+echo -e "${BLUE}Creating $DEST_FOLDER if it doesn't exist"
+mkdir -pv "$DEST_FOLDER"
+chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"
 
-cp "$USER_HOME"/.config/fastfetch/config.jsonc "$DEST_FOLDER"/config.jsonc
-cp "$USER_HOME"/.config/kitty/kitty.conf "$DEST_FOLDER"/kitty.conf
-cp /etc/locale.conf "$DEST_FOLDER"/locale.conf
-cp /etc/dracut.conf.d/myflags.conf "$DEST_FOLDER"/myflags.conf
-cp "$USER_HOME"/.config/ohmyposh/myprofile.yaml "$DEST_FOLDER"/myprofile.yaml
-# The dot is removed for the file to not be hidden
-cp "$USER_HOME"/.zshrc "$DEST_FOLDER"/zshrc
+# Backing up configs
+echo -e "\n${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
+
+for i in "${CONFIGS[@]}"; do
+  FILE_NAME=$(basename "$i")
+  if [[ $FILE_NAME == .* ]]; then
+    FILE_NAME="${FILE_NAME#?}"
+    # echo "$FILE_NAME"
+  fi
+  # echo "$i"
+  # echo "$DEST_FOLDER"/"$FILE_NAME"
+  cp "$i" "$DEST_FOLDER"/"$FILE_NAME"
+done
 
 echo -e "\n${GREEN}Finished backing up configs${NC}\n"
