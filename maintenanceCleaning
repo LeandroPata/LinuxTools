@@ -22,8 +22,7 @@ echo -e "\n${GREEN}Removed uninstalled packages${NC}\n"
 
 # Remove orphans
 echo -e "\n${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITELY INSTALL TO KEEP THEM${NC}\n"
-pacman -Qdtq > orphanPackages.txt
+pacman -Qdtq >orphanPackages.txt
 echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
 pacman -Rns "$(pacman -Qdtq)"
 echo -e "\n${GREEN}Finished cleaning${NC}"
-

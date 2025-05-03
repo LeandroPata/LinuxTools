@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-paclog --before="$(stat ~ | grep "Birth" | cut -d " " -f 3,4)" | grep "installed" | cut -d " " -f 4 | sort | uniq > A && pacman -Qqe > B ; git diff A B | grep ^+ > installedPackages.txt ; rm A B
+paclog --before="$(stat ~ | grep "Birth" | cut -d " " -f 3,4)" | grep "installed" | cut -d " " -f 4 | sort | uniq >A && pacman -Qqe >B
+git diff A B | grep ^+ >installedPackages.txt
+rm A B
