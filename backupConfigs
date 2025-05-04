@@ -44,4 +44,4 @@ for i in "${CONFIGS[@]}"; do
   cp "$i" "$DEST_FOLDER"/"$FILE_NAME"
 done
 
-echo -e "\n${GREEN}Finished backing up configs${NC}\n"
+echo -e "\n${GREEN}Finished backing up configs${NC}"

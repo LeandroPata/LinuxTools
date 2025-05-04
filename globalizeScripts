@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+if [ "$HOME" = "/root" ]; then
+  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+  printf "\n"
+else
+  USER_HOME=$HOME
+  echo -e "\n${RED}Root permission will be required to make script global!${NC}"
+  exit 1
+fi
+
+DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+DEST_FOLDER="$USER_HOME/Dev/Linux/Config/Test"
+SCRIPTS=()
+
+for file in "$DIR"/*; do
+  FILE_NAME=$(basename "$file")
+  read -r -n 1 -p "Make $FILE_NAME global? [Y/n] " filePrompt
+  # Don't know why when just clicking enter result in a \n but whatever
+  if [ "$filePrompt" == Y ] || [ "$filePrompt" == y ]; then
+    SCRIPTS+=("$file")
+    printf "\n"
+  elif [ "$filePrompt" == '' ]; then
+    SCRIPTS+=("$file")
+  else
+    printf "\n"
+  fi
+
+done
+
+printf "\n"
+
+for script in "${SCRIPTS[@]}"; do
+  FILE_NAME=$(basename "$script")
+  echo "$FILE_NAME"
+done
+
+echo -e "${BLUE}"
+read -r -n 1 -p "Confirm scripts selection to make global? [Y/n] " prompt
+echo -e "${NC}"
+if ! [ "$prompt" == Y ] && ! [ "$prompt" == y ] && ! [ "$prompt" == '' ]; then
+  echo -e "\n${RED}Quitting${NC}"
+  exit 1
+fi
+
+echo -e "\n${BLUE}Copying scripts to /usr/bin/${NC}"
+
+for defScript in "${SCRIPTS[@]}"; do
+  FILE_NAME=$(basename "$defScript")
+  cp "$defScript" /usr/bin/"$FILE_NAME"
+  chown "$SUDO_USER":"$SUDO_USER" /usr/bin/"$FILE_NAME"
+  chmod +x /usr/bin/"$FILE_NAME"
+done
+
+echo -e "\n${GREEN}Copying finished${NC}"
