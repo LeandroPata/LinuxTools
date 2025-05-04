@@ -5,24 +5,39 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+if [ "$HOME" = "/root" ]; then
+  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else
+  USER_HOME=$HOME
+  echo -e "\n${RED}Some operations require root permission!${NC}"
+fi
+
+DEST_FOLDER="$USER_HOME/Dev/Linux/Tools"
+DEST_FILE="orphanedPackages.txt"
+
+echo -e "\n${BLUE}Creating $DEST_FOLDER if it doesn't exist${NC}"
+mkdir -pv "$DEST_FOLDER"
+chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"
+
 # Clean journal
-echo -e "${BLUE}Cleaning journal${NC}\n"
+echo -e "\n${BLUE}Cleaning journal${NC}\n"
 journalctl --vacuum-time=4weeks
 echo -e "\n${GREEN}Finished cleaning journal${NC}\n"
 
 # Clean cache
-echo -e "\n${BLUE}Cleaning cache${NC}\n"
+echo -e "${BLUE}Cleaning cache${NC}\n"
 paccache -r
 echo -e "\n${GREEN}Finished cleaning cache${NC}\n"
 
 # Remove uninstalled packages
-echo -e "\n${BLUE}Removing uninstalled packages${NC}\n"
+echo -e "${BLUE}Removing uninstalled packages${NC}\n"
 paccache -ruk0
 echo -e "\n${GREEN}Removed uninstalled packages${NC}\n"
 
 # Remove orphans
-echo -e "\n${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITELY INSTALL TO KEEP THEM${NC}\n"
-pacman -Qdtq >orphanPackages.txt
+echo -e "${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITELY INSTALL TO KEEP THEM${NC}\n"
+pacman -Qdtq >"$DEST_FOLDER"/"$DEST_FILE"
+chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
 echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
 pacman -Rns "$(pacman -Qdtq)"
 echo -e "\n${GREEN}Finished cleaning${NC}"

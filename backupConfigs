@@ -11,7 +11,7 @@ if [ "$HOME" = "/root" ]; then
   USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
 else
   USER_HOME=$HOME
-  echo -e "${RED}Some configs may require root permission to backup${NC}\n"
+  echo -e "\n${RED}Some configs may require root permission to backup!${NC}\n"
 fi
 
 CONFIGS=(
@@ -34,6 +34,7 @@ echo -e "\n${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
 
 for i in "${CONFIGS[@]}"; do
   FILE_NAME=$(basename "$i")
+  # This check is to make dot files (hidden files) visible
   if [[ $FILE_NAME == .* ]]; then
     FILE_NAME="${FILE_NAME#?}"
     # echo "$FILE_NAME"

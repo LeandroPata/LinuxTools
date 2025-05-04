@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
 
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+if ! [ "$HOME" = "/root" ]; then
+  echo -e "\n${RED}Some operations require root permission!${NC}"
+fi
+
 # Update Arch Mirrorlist
-echo -e "${BLUE}Updating Arch Mirrorlist${NC}\n"
+echo -e "\n${BLUE}Updating Arch Mirrorlist${NC}\n"
 reflector --protocol https --verbose --latest 25 --sort rate --save /etc/pacman.d/mirrorlist
 echo -e "\n${GREEN}Updated Arch Mirrorlist${NC}\n"
 
 # Update EndevourOs Mirrorlist
-echo -e "\n${BLUE}Updating EndevourOs Mirrorlist${NC}\n"
+echo -e "${BLUE}Updating EndevourOs Mirrorlist${NC}\n"
 eos-rankmirrors --verbose
 echo -e "\n${GREEN}Updated EndevourOs Mirrorlist${NC}\n"
 
 # Refresh system
-echo -e "\n${BLUE}Refreshing system${NC}\n"
+echo -e "${BLUE}Refreshing system${NC}\n"
 yay -Syyu
-echo -e "\n${GREEN}Finished updating${NC}"
+echo -e "\n${GREEN}Finished updating${NC}\n"
