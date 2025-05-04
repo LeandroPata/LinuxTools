@@ -1,5 +1,25 @@
 #!/usr/bin/env bash
 
-paclog --before="$(stat ~ | grep "Birth" | cut -d " " -f 3,4)" | grep "installed" | cut -d " " -f 4 | sort | uniq >A && pacman -Qqe >B
-git diff A B | grep ^+ >installedPackages.txt
-rm A B
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+if [ "$HOME" = "/root" ]; then
+  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else
+  USER_HOME=$HOME
+fi
+
+DEST_FOLDER="$USER_HOME/Dev/Linux/Tools"
+DEST_FILE="installedPackages.txt"
+
+echo -e "${BLUE}Creating $DEST_FOLDER if it doesn't exist${NC}"
+mkdir -pv "$DEST_FOLDER"
+chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"
+
+echo -e "\n${BLUE} Creating $DEST_FILE with a list with all installed packages${NC}"
+pacman -Qqe >"$DEST_FOLDER"/"$DEST_FILE"
+chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
+echo -e "\n${GREEN}Created $DEST_FILE"
+echo -e "\n${RED}Careful with distro and DE specific packages when re-installing packages from $DEST_FILE!${NC}\n"
