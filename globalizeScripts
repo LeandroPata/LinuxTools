@@ -5,17 +5,15 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-if [ "$HOME" = "/root" ]; then
-  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+if [ $EUID = 0 ]; then
   printf "\n"
 else
-  USER_HOME=$HOME
   echo -e "\n${RED}Root permission will be required to make script global!${NC}"
   exit 1
 fi
 
 DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
-DEST_FOLDER="$USER_HOME/Dev/Linux/Config/Test"
+
 SCRIPTS=()
 
 for file in "$DIR"/*; do
