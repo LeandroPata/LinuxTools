@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# NetworkManager-wait-online.service was taking +8 sec which resulted in boot times of 33-40 sec
+# Disabling it resulted in boot times of 20-25 sec
+# Not recommended to run without understanding what you're doing
+systemctl disable NetworkManager-wait-online.service
