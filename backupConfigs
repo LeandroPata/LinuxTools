@@ -21,6 +21,7 @@ CONFIGS=(
   "/etc/dracut.conf.d/myflags.conf"
   "$USER_HOME/.config/ohmyposh/myprofile.yaml"
   "$USER_HOME/.zshrc"
+  "$USER_HOME/.config/ghostty/config"
 )
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config"
