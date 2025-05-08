@@ -1,5 +1,13 @@
 # LinuxTools
 
+## System Information
+
+These tools were created to help improve my own personal Linux experience, so they might not work for others, especially with vastly different distros (such as Debian based distros due to it using a different package manager, for example).
+
+My system runs Arch based EndeavourOs, with a KDE Plasma 6 desktop environment, along with a systemd-boot bootloader.
+
+I expect these tools should work at least for those running an Arch based Linux system just fine, but no testing other than on my own system was made. Use them at your own risk.
+
 ## BackupConfigs
 
 Backs up the specified configs (or other files) into the a designated folder.
