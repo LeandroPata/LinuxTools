@@ -32,6 +32,10 @@ Careful when using it to reinstall packages, as it also includes distro specific
 - DEST_FOLDER variable designates the desired folder to output the file to;
 - DEST_FILE variable designated the desired text file name (and possible extension, though that wasn't tested);
 
+## GlobalizeScripts
+
+Makes the selected scripts from the current directory global (copies them into /usr/bin), to make them executable anywhere in the system instead of only on the folder they're contained in.
+
 ## MaintenanceCleaning
 
 Automates some of the maintenance that should be done to keep the machine 'healthy', so that only the script needs to be executed instead of the individual commands.
@@ -55,3 +59,7 @@ Automates updating the mirrorlists, so that only the script needs to be executed
 - Updates Arch mirrorlist
 - Updates EndeavourOs mirrorlist
 - Updates system (yay -Syyu)
+
+## UpdateGlobalScripts
+
+Checks if the scripts contained in the current directory are global (exist in /usr/bin) and prompts the user if they should be updated.
