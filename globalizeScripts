@@ -18,20 +18,28 @@ SCRIPTS=()
 
 for file in "$DIR"/*; do
   FILE_NAME=$(basename "$file")
-  read -r -n 1 -p "Make $FILE_NAME global? [Y/n] " filePrompt
-  # Don't know why when just clicking enter result in a \n but whatever
-  if [ "$filePrompt" == Y ] || [ "$filePrompt" == y ]; then
-    SCRIPTS+=("$file")
+  read -n 1 -rp "Make $FILE_NAME global? [Y/n] " prompt
+
+  # Convert input to lowercase
+  prompt=${prompt,,}
+
+  #Add extra \n if not empty due to "enter" inserting a newline
+  if [[ -n "$prompt" ]]; then
     printf "\n"
-  elif [ "$filePrompt" == '' ]; then
+  fi
+
+  if [ "$prompt" == y ] || [ -z "$prompt" ]; then
     SCRIPTS+=("$file")
-  else
-    printf "\n"
   fi
 
 done
 
-printf "\n"
+if [ ${#SCRIPTS[@]} -eq 0 ]; then
+  echo -e "\n${RED}No scripts were selected. Quitting${NC}"
+  exit 1
+fi
+
+printf "\n${GREEN}"
 
 for script in "${SCRIPTS[@]}"; do
   FILE_NAME=$(basename "$script")
@@ -39,9 +47,17 @@ for script in "${SCRIPTS[@]}"; do
 done
 
 echo -e "${BLUE}"
-read -r -n 1 -p "Confirm scripts selection to make global? [Y/n] " prompt
-echo -e "${NC}"
-if ! [ "$prompt" == Y ] && ! [ "$prompt" == y ] && ! [ "$prompt" == '' ]; then
+read -n 1 -rp "Confirm scripts selection to make global? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if ! [ "$prompt" == y ] && [ -n "$prompt" ]; then
   echo -e "\n${RED}Quitting${NC}"
   exit 1
 fi
