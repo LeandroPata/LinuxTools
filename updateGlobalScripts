@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+if [ $EUID = 0 ]; then
+  printf "\n"
+else
+  echo -e "\n${RED}Root permission will be required to make script global!${NC}"
+  exit 1
+fi
+
+DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+
+SCRIPTS=()
+
+for file in "$DIR"/*; do
+  FILE_NAME=$(basename "$file")
+
+  if [ -f "/usr/bin/$FILE_NAME" ]; then
+    #echo "/usr/bin/$FILE_NAME" exists
+    SCRIPTS+=("$file")
+  fi
+done
+
+printf "${GREEN}"
+
+for script in "${SCRIPTS[@]}"; do
+  FILE_NAME=$(basename "$script")
+  echo "$FILE_NAME"
+done
+
+echo -e "${BLUE}"
+read -n 1 -rp "These script were found in /usr/bin, update? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if ! [ "$prompt" == y ] && [ -n "$prompt" ]; then
+  echo -e "\n${RED}Quitting${NC}"
+  exit 1
+fi
+
+echo -e "\n${BLUE}Copying scripts to /usr/bin/${NC}"
+
+for defScript in "${SCRIPTS[@]}"; do
+  FILE_NAME=$(basename "$defScript")
+  cp "$defScript" /usr/bin/"$FILE_NAME"
+  chown "$SUDO_USER":"$SUDO_USER" /usr/bin/"$FILE_NAME"
+  chmod +x /usr/bin/"$FILE_NAME"
+done
+
+echo -e "\n${GREEN}Copying finished${NC}"
