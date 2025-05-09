@@ -2,7 +2,7 @@
 
 ## System Information
 
-These tools were created to help improve my own personal Linux experience, so they might not work for others, especially with vastly different distros (such as Debian based distros due to it using a different package manager, for example).
+These tools were created to help improve my own personal Linux experience, so they might not work for others, especially with vastly different distros (such as Debian based distros due to it using a different package manager, for example). I have also added prompts where possible in case only some tasks of a script are useful (such as the unnecessary update of EndeavourOs mirrorlists in an Arch system, for example).
 
 My system runs Arch based EndeavourOs, with a KDE Plasma 6 desktop environment, along with a systemd-boot bootloader.
 
@@ -46,7 +46,7 @@ Automates some of the maintenance that should be done to keep the machine 'healt
 ## PrepareSystemD
 
 Script to reinstall kernels, copied from this tutorial when switching to systemd-boot:
-https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290
+<https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290>
 
 ## UpdateMirrorList
 
