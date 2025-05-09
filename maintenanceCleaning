@@ -19,25 +19,79 @@ echo -e "\n${BLUE}Creating $DEST_FOLDER if it doesn't exist${NC}"
 mkdir -pv "$DEST_FOLDER"
 chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"
 
-# Clean journal
-echo -e "\n${BLUE}Cleaning journal${NC}\n"
-journalctl --vacuum-time=4weeks
-echo -e "\n${GREEN}Finished cleaning journal${NC}\n"
+echo -e "${BLUE}"
+read -n 1 -rp "Clean journal? [Y/n] " prompt
 
-# Clean cache
-echo -e "${BLUE}Cleaning cache${NC}\n"
-paccache -r
-echo -e "\n${GREEN}Finished cleaning cache${NC}\n"
+# Convert input to lowercase
+prompt=${prompt,,}
 
-# Remove uninstalled packages
-echo -e "${BLUE}Removing uninstalled packages${NC}\n"
-paccache -ruk0
-echo -e "\n${GREEN}Removed uninstalled packages${NC}\n"
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
 
-# Remove orphans
-echo -e "${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITLY INSTALL TO KEEP THEM${NC}\n"
-pacman -Qdtq >"$DEST_FOLDER"/"$DEST_FILE"
-chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
-echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
-pacman -Rns "$(pacman -Qdtq)"
-echo -e "\n${GREEN}Finished cleaning${NC}"
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Clean journal
+  echo -e "\n${BLUE}Cleaning journal${NC}\n"
+  journalctl --vacuum-time=4weeks
+  echo -e "\n${GREEN}Finished cleaning journal\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Clean pacman cache? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Clean cache
+  echo -e "\n${BLUE}Cleaning pacman cache${NC}\n"
+  paccache -r
+  echo -e "\n${GREEN}Finished cleaning pacman cache\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Remove uninstalled pacman packages files? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Remove uninstalled packages
+  echo -e "\n${BLUE}Removing uninstalled pacman packages${NC}\n"
+  paccache -ruk0
+  echo -e "\n${GREEN}Removed uninstalled pacman packages\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Remove orphan packages? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Remove orphans
+  echo -e "${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITLY INSTALL TO KEEP THEM${NC}\n"
+  pacman -Qdtq >"$DEST_FOLDER"/"$DEST_FILE"
+  chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
+  echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
+  pacman -Rns "$(pacman -Qdtq)"
+  echo -e "\n${GREEN}Finished cleaning"
+fi
+
+printf "${NC}"

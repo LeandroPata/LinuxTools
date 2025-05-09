@@ -9,17 +9,58 @@ if ! [ $EUID = 0 ]; then
   echo -e "\n${RED}Some operations require root permission!${NC}"
 fi
 
-# Update Arch Mirrorlist
-echo -e "\n${BLUE}Updating Arch Mirrorlist${NC}\n"
-reflector --protocol https --verbose --latest 25 --sort rate --save /etc/pacman.d/mirrorlist
-echo -e "\n${GREEN}Updated Arch Mirrorlist${NC}\n"
+echo -e "${BLUE}"
+read -n 1 -rp "Update Arch Mirrorlist? [Y/n] " prompt
 
-# Update EndevourOs Mirrorlist
-echo -e "${BLUE}Updating EndevourOs Mirrorlist${NC}\n"
-eos-rankmirrors --verbose
-echo -e "\n${GREEN}Updated EndevourOs Mirrorlist${NC}\n"
+# Convert input to lowercase
+prompt=${prompt,,}
 
-# Refresh system
-echo -e "${BLUE}Refreshing system${NC}\n"
-yay -Syyu
-echo -e "\n${GREEN}Finished updating${NC}"
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Update Arch Mirrorlist
+  echo -e "\n${BLUE}Updating Arch Mirrorlist${NC}\n"
+  reflector --protocol https --verbose --latest 25 --sort rate --save /etc/pacman.d/mirrorlist
+  echo -e "\n${GREEN}Updated Arch Mirrorlist\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Update EndeavourOS Mirrorlist? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Update EndeavourOS Mirrorlist
+  echo -e "\n${BLUE}Updating EndeavourOS Mirrorlist${NC}\n"
+  eos-rankmirrors --verbose
+  echo -e "\n${GREEN}Updated EndeavourOS Mirrorlist\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Update system? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Update system
+  echo -e "\n${BLUE}Updating system${NC}\n"
+  yay -Syyu
+  echo -e "\n${GREEN}Finished updating"
+fi
+
+printf "${NC}"
