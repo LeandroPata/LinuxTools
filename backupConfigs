@@ -22,6 +22,9 @@ CONFIGS=(
   "$USER_HOME/.config/ohmyposh/myprofile.yaml"
   "$USER_HOME/.zshrc"
   "$USER_HOME/.config/ghostty/config"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userChrome.css"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userContent.css"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/natsumi-config.css"
 )
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config"
@@ -35,14 +38,29 @@ echo -e "\n${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
 
 for i in "${CONFIGS[@]}"; do
   FILE_NAME=$(basename "$i")
+  if [[ $(dirname "$i") == "$USER_HOME" ]]; then
+    FILE_DIR="user"
+  else
+    FILE_DIR=$(basename "$(dirname "$i")")
+  fi
+
   # This check is to make dot files (hidden files) visible
   if [[ $FILE_NAME == .* ]]; then
     FILE_NAME="${FILE_NAME#?}"
     # echo "$FILE_NAME"
   fi
-  # echo "$i"
-  # echo "$DEST_FOLDER"/"$FILE_NAME"
-  cp "$i" "$DEST_FOLDER"/"$FILE_NAME"
+
+  # This check is to make dot folders (hidden folders) visible
+  if [[ $FILE_DIR == .* ]]; then
+    FILE_DIR="${FILE_DIR#?}"
+    # echo "$FILE_NAME"
+  fi
+
+  printf "${NC}"
+  mkdir -pv "$DEST_FOLDER"/"$FILE_DIR"
+  chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$FILE_DIR"
+  printf "${RED}"
+  cp "$i" "$DEST_FOLDER"/"$FILE_DIR"/"$FILE_NAME"
 done
 
 echo -e "\n${GREEN}Finished backing up configs${NC}"
