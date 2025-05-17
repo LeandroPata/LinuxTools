@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Check if it is a directory, file or invalid
+isDir() {
+  if [[ -d $1 ]]; then
+    # This is a directory
+    return 1
+  elif [[ -f $1 ]]; then
+    # This is a file
+    return 2
+  else
+    # This is invalid
+    return 0
+  fi
+}
+
+# Handles logic according to the file type
+handleType() {
+  # If it is a directory, then go through the directory to check for files
+  # or directories
+  if [[ $1 -eq 1 ]]; then
+    echo "$2"
+    ImageInfoFEH=("$(feh -L "%f|R:%wx%h|%p|%t" -S pixels -r "$2")")
+    echo "${ImageInfoFEH[0]}" >>imageInfo.txt
+
+  # If it is a file, check if it is an image
+  elif [[ $1 -eq 2 ]]; then
+
+    IsIt=$(file "$2" --mime-type -b)
+    NeedImageOnly="ItIs_"${IsIt/'/'*/}
+
+    # If it is an image, print its information
+    if [ "$NeedImageOnly" == "ItIs_image" ]; then
+      echo "$2"
+      ImageInfoFEH=("$(feh -L "%f|R:%wx%h|%p|%t" "$2")")
+      echo "${ImageInfoFEH[0]}" >>imageInfo.txt
+    fi
+  fi
+}
+
+PAR=$1
+isDir "$PAR"
+TYPE=$?
+handleType "$TYPE" "$PAR"
