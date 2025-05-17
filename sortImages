@@ -38,7 +38,12 @@ handleType() {
   fi
 }
 
-PAR=$1
+if [[ $1 == '' ]]; then
+  PAR=$(pwd)
+else
+  PAR=$1
+fi
+
 isDir "$PAR"
 TYPE=$?
 handleType "$TYPE" "$PAR"
