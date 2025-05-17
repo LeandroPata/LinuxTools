@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Package cache cleaning implementation from @albertored11
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -14,6 +16,9 @@ fi
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Tools"
 DEST_FILE="orphanedPackages.txt"
+
+cachedir="$USER_HOME/.cache/yay"
+removed="$(comm -23 <(basename -a $(find $cachedir -mindepth 1 -maxdepth 1 -type d) | sort) <(pacman -Qqm) | xargs -r printf "$cachedir/%s\n")"
 
 echo -e "\n${BLUE}Creating $DEST_FOLDER if it doesn't exist${NC}"
 mkdir -pv "$DEST_FOLDER"
@@ -31,10 +36,33 @@ if [[ -n "$prompt" ]]; then
 fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
-  # Clean journal
+  # Clean journal entries older than 4 weeks
   echo -e "\n${BLUE}Cleaning journal${NC}\n"
   journalctl --vacuum-time=4weeks
   echo -e "\n${GREEN}Finished cleaning journal\n"
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Remove uninstalled packages files? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+  # Remove uninstalled pacman packages
+  echo -e "\n${BLUE}Removing uninstalled pacman packages${NC}\n"
+  paccache -ruk0
+  echo -e "\n${GREEN}Removed uninstalled pacman packages\n"
+
+  # Remove yay cache for foreign packages that are not installed anymore
+  echo -e "\n${BLUE}Removing uninstalled foreign packages${NC}\n"
+  rm -rf $removed
+  echo -e "${GREEN}Removed uninstalled foreign packages\n"
 fi
 
 echo -e "${BLUE}"
@@ -49,28 +77,34 @@ if [[ -n "$prompt" ]]; then
 fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
-  # Clean cache
-  echo -e "\n${BLUE}Cleaning pacman cache${NC}\n"
-  paccache -r
-  echo -e "\n${GREEN}Finished cleaning pacman cache\n"
-fi
+  # Clean pacman cache
+  echo -e "\n${BLUE}Cleaning packages cache${NC}\n"
 
-echo -e "${BLUE}"
-read -n 1 -rp "Remove uninstalled pacman packages files? [Y/n] " prompt
+  pkgcache="$(find $cachedir -mindepth 1 -maxdepth 1 -type d | xargs -r printf "-c %s\n")"
 
-# Convert input to lowercase
-prompt=${prompt,,}
+  for pkgdir in "$cachedir"/*/; do
 
-#Add extra \n if not empty due to "enter" inserting a newline
-if [[ -n "$prompt" ]]; then
-  printf "\n"
-fi
+    pkgname=$(basename "$pkgdir")
 
-if [ "$prompt" == y ] || [ -z "$prompt" ]; then
-  # Remove uninstalled packages
-  echo -e "\n${BLUE}Removing uninstalled pacman packages${NC}\n"
+    # Remove untracked files (e. g. source/build files) excepting package files and main source files for installed version if non-git package
+    if [[ ! "$pkgname" =~ ^.*-git$ ]]; then
+
+      pkgver="$(pacman -Q $pkgname | cut -d ' ' -f2 | cut -d '-' -f1 | cut -d ':' -f2)"
+
+      cd "$pkgdir"
+      rm -f $(git ls-files --others | grep -v -e '^.*\.pkg\.tar.*$' -e '^.*/$' -e "^.*$pkgver.*$" | xargs -r printf "$pkgdir/%s\n")
+
+    fi
+
+    rm -rf "$pkgdir"/src/
+
+  done
+
+  # Remove everything for uninstalled foreign packages and uninstalled native packages, keep two latest versions for installed packages
+  paccache -ruk0 $pkgcache
   paccache -ruk0
-  echo -e "\n${GREEN}Removed uninstalled pacman packages\n"
+  paccache -rk2
+  echo -e "\n${GREEN}Finished cleaning packages cache\n"
 fi
 
 echo -e "${BLUE}"
@@ -85,7 +119,7 @@ if [[ -n "$prompt" ]]; then
 fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
-  # Remove orphans
+  # Remove orphan packages
   echo -e "${BLUE}Removing orphan packages\n${RED}CHECK ALL PACKAGES AND EXPLICITLY INSTALL TO KEEP THEM${NC}\n"
   pacman -Qdtq >"$DEST_FOLDER"/"$DEST_FILE"
   chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
