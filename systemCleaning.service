@@ -1,0 +1,9 @@
+[Unit]
+Description=System Cleaning Service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/bin/systemCleaning
+
+[Install]
+WantedBy=multi-user.target
