@@ -18,6 +18,10 @@ SCRIPTS=()
 
 for file in "$DIR"/*; do
   FILE_NAME=$(basename "$file")
+
+  if [[ $FILE_NAME == *.txt ]] || [[ $FILE_NAME == *.service ]] || [[ $FILE_NAME == *.timer ]] || [[ $FILE_NAME == *.md ]]; then
+    continue
+  fi
   read -n 1 -rp "Make $FILE_NAME global? [Y/n] " prompt
 
   # Convert input to lowercase
