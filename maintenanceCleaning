@@ -14,7 +14,12 @@ else
   echo -e "\n${RED}Some operations require root permission!${NC}"
 fi
 
-DEST_FOLDER="$USER_HOME/Dev/Linux/Tools"
+if [[ $1 == '' ]]; then
+  DEST_FOLDER=$(pwd)
+else
+  DEST_FOLDER=$1
+fi
+
 DEST_FILE="orphanedPackages.txt"
 
 cachedir="$USER_HOME/.cache/yay"
