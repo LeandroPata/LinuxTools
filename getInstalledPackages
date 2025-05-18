@@ -5,13 +5,12 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-if [ $EUID = 0 ]; then
-  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+if [[ $1 == '' ]]; then
+  DEST_FOLDER=$(pwd)
 else
-  USER_HOME=$HOME
+  DEST_FOLDER=$1
 fi
 
-DEST_FOLDER="$USER_HOME/Dev/Linux/Tools"
 DEST_FILE="installedPackages.txt"
 
 echo -e "${BLUE}Creating $DEST_FOLDER if it doesn't exist${NC}"
