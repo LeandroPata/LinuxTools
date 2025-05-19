@@ -23,8 +23,6 @@ mkdir -p "$DEST_FOLDER"
 chown "$admin":"$admin" "$DEST_FOLDER"
 
 # Backing up configs
-echo "$admin"
-echo "$DEST_FOLDER"
 
 for config in "${CONFIGS[@]}"; do
   if ! [[ -f $config ]]; then

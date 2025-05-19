@@ -27,6 +27,30 @@ Or
 ./manualBackupConfigs path/to/folder
 ```
 
+## BackupConfigs
+
+Same as ManualBackupConfigs, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+
+Use with backup-configs.service and backup-configs.timer to automate.
+
+## backup-configs.service and backup-configs.timer
+
+Automates backupConfigs execution and executes the script once a month.
+Should be placed in /etc/systemd/system/
+
+```
+/usr/bin/backupConfigs should be changed to whatever is your backupConfigs script path
+```
+
+To activate the timer:
+
+```
+systemctl daemon-reload
+sudo systemctl enable backup-configs.timer
+sudo systemctl start backup-configs.timer
+sudo systemctl list-timers # optional, just to check if the timer has been activated
+```
+
 ## BootOptimizations
 
 Boot optimizations I have personally done to my machine to improve boot times.
@@ -50,8 +74,7 @@ Makes the selected scripts from the current directory global (copies them into /
 
 ## PrepareSystemD
 
-Script to reinstall kernels, copied from this tutorial when switching to systemd-boot:
-<https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290>
+Script to reinstall kernels, copied from [this tutorial when switching to systemd-boot](https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290)
 
 ## SortImages
 
@@ -98,13 +121,27 @@ Use with systemCleaning.service and systemCleaning.timer to automate.
 
 ## SystemCleaning.service and SystemCleaning.timer
 
-Automates systemCleaning execution and executes the script once a month
+Automates systemCleaning execution and executes the script once a month.
+Should be placed in /etc/systemd/system/
 
 ```
 /usr/bin/systemCleaning should be changed to whatever is your systemCleaning script path
 ```
 
-## ManualUpdateMirrorList
+To activate the timer:
+
+```
+systemctl daemon-reload
+sudo systemctl enable systemCleaning.timer
+sudo systemctl start systemCleaning.timer
+sudo systemctl list-timers # optional, just to check if the timer has been activated
+```
+
+## UpdateGlobalScripts
+
+Checks if the scripts contained in the current directory are global (exist in /usr/bin) and prompts the user if they should be updated.
+
+## ManualUpdateMirrorlist
 
 Automates updating the mirrorlists, so that only the script needs to be executed instead of the individual commands.
 
@@ -112,6 +149,26 @@ Automates updating the mirrorlists, so that only the script needs to be executed
 - Updates EndeavourOs mirrorlist
 - Updates system (yay -Syyu)
 
-## UpdateGlobalScripts
+## UpdateMirrorlist
 
-Checks if the scripts contained in the current directory are global (exist in /usr/bin) and prompts the user if they should be updated.
+Same as ManualUpdateMirrorlist, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+
+Use with updateMirrorlist.service and updateMirrorlist.timer to automate.
+
+## UpdateMirrorlist.service and UpdateMirrorlist.timer
+
+Automates updateMirrorlist execution and executes the script once a month.
+Should be placed in /etc/systemd/system/
+
+```
+/usr/bin/updateMirrorlist should be changed to whatever is your updateMirrorlist script path
+```
+
+To activate the timer:
+
+```
+systemctl daemon-reload
+sudo systemctl enable updateMirrorlist.timer
+sudo systemctl start updateMirrorlist.timer
+sudo systemctl list-timers # optional, just to check if the timer has been activated
+```
