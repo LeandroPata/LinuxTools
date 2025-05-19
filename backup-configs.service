@@ -1,0 +1,9 @@
+[Unit]
+Description=Service to backup configs
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/bin/backupConfigs
+
+[Install]
+WantedBy=multi-user.target

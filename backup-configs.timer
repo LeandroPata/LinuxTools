@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer for backupConfigs
+
+[Timer]
+OnCalendar=monthly
+Persistent=yes
+RandomizedDelaySec=1min
+
+[Install]
+WantedBy=timers.target
