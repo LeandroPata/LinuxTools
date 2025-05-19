@@ -1,0 +1,9 @@
+[Unit]
+Description=Service to update mirrorlists
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/bin/updateMirrorlist
+
+[Install]
+WantedBy=multi-user.target
