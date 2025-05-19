@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Update Arch Mirrorlist
+reflector --protocol https --latest 25 --sort rate --save /etc/pacman.d/mirrorlist
+
+# Update EndeavourOS Mirrorlist
+eos-rankmirrors
