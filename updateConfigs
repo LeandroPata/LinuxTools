@@ -32,9 +32,6 @@ else
 fi
 
 CFGS=()
-#NEW_CFGS=()
-
-echo "$CUR_DIR"
 
 verifyCfgDir() {
   for configDir in "${CONFIGS[@]}"; do
@@ -63,17 +60,6 @@ verifyCfg() {
   done
   false
 }
-
-# addNewConfigs() {
-#   newDir=$1
-#   if [[ -d newDir ]]; then
-#     for file in "${newDir[@]}"; do
-#       addNewConfigs "$file"
-#     done
-#   elif [[ -f $newDir ]]; then
-#     NEW_CFGS+=("$newDir")
-#   fi
-# }
 
 if ! [[ -d $CUR_DIR ]]; then
   echo -e "${RED}\nNot a valid directory!${NC}"

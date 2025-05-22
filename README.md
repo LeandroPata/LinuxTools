@@ -137,9 +137,42 @@ sudo systemctl start systemCleaning.timer
 sudo systemctl list-timers # optional, just to check if the timer has been activated
 ```
 
+## UpdateConfigs
+
+Checks if the configs contained in the directory provided are in the list and prompts the user if they should be updated.
+
+- The configs system path have to be included in the CONFIGS variable. Any configs not included in CONFIGS will be ignored
+- CUR_DIR parameter designates the provided folder with the configs (otherwise it will be set as the current folder);
+
+Example execution:
+
+```
+./updateConfigs
+```
+
+Or
+
+```
+./updateConfigs path/to/folder
+```
+
 ## UpdateGlobalScripts
 
-Checks if the scripts contained in the current directory are global (exist in /usr/bin) and prompts the user if they should be updated.
+Checks if the scripts contained in the directory provided are global (exist in /usr/bin) and prompts the user if they should be updated.
+
+- CUR_DIR parameter designates the provided folder with the scripts (otherwise it will be set as the current folder);
+
+Example execution:
+
+```
+./updateGlobalScripts
+```
+
+Or
+
+```
+./updateGlobalScripts path/to/folder
+```
 
 ## ManualUpdateMirrorlist
 
