@@ -12,11 +12,15 @@ else
   exit 1
 fi
 
-DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+if [[ $1 == '' ]]; then
+  CUR_DIR=$(pwd)
+else
+  CUR_DIR=$1
+fi
 
 SCRIPTS=()
 
-for file in "$DIR"/*; do
+for file in "$CUR_DIR"/*; do
   FILE_NAME=$(basename "$file")
 
   if [ -f "/usr/bin/$FILE_NAME" ]; then
@@ -33,7 +37,7 @@ for script in "${SCRIPTS[@]}"; do
 done
 
 echo -e "${BLUE}"
-read -n 1 -rp "These script were found in /usr/bin, update? [Y/n] " prompt
+read -n 1 -rp "These scripts were found in /usr/bin, update? [Y/n] " prompt
 
 # Convert input to lowercase
 prompt=${prompt,,}
@@ -48,7 +52,7 @@ if ! [ "$prompt" == y ] && [ -n "$prompt" ]; then
   exit 1
 fi
 
-echo -e "\n${BLUE}Copying scripts to /usr/bin/${NC}"
+echo -e "\n${BLUE}Updating scripts${NC}"
 
 for defScript in "${SCRIPTS[@]}"; do
   FILE_NAME=$(basename "$defScript")
@@ -57,4 +61,4 @@ for defScript in "${SCRIPTS[@]}"; do
   chmod +x /usr/bin/"$FILE_NAME"
 done
 
-echo -e "\n${GREEN}Copying finished${NC}"
+echo -e "\n${GREEN}Updating finished${NC}"

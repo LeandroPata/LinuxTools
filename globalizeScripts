@@ -12,11 +12,15 @@ else
   exit 1
 fi
 
-DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+if [[ $1 == '' ]]; then
+  CUR_DIR=$(pwd)
+else
+  CUR_DIR=$1
+fi
 
 SCRIPTS=()
 
-for file in "$DIR"/*; do
+for file in "$CUR_DIR"/*; do
   FILE_NAME=$(basename "$file")
 
   if [[ $FILE_NAME == *.txt ]] || [[ $FILE_NAME == *.service ]] || [[ $FILE_NAME == *.timer ]] || [[ $FILE_NAME == *.md ]]; then

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
 # Check if it is a directory, file or invalid
 isDir() {
   if [[ -d $1 ]]; then
@@ -19,9 +24,10 @@ handleType() {
   # If it is a directory, then go through the directory to check for files
   # or directories
   if [[ $1 -eq 1 ]]; then
-    echo "$2"
+    echo -e "\n${BLUE}"Sorting through "$2"..."${RED}\n"
     ImageInfoFEH=("$(feh -L "%f|R:%wx%h|%p|%t" -S pixels -r "$2")")
     echo "${ImageInfoFEH[0]}" >>imageInfo.txt
+    echo -e "\n${BLUE}"Sorting finished. Results in imageInfo.txt"${NC}"
 
   # If it is a file, check if it is an image
   elif [[ $1 -eq 2 ]]; then
@@ -31,9 +37,10 @@ handleType() {
 
     # If it is an image, print its information
     if [ "$NeedImageOnly" == "ItIs_image" ]; then
-      echo "$2"
+      echo -e "\n${BLUE}"Sorting through "$2"..."${RED}\n"
       ImageInfoFEH=("$(feh -L "%f|R:%wx%h|%p|%t" "$2")")
       echo "${ImageInfoFEH[0]}" >>imageInfo.txt
+      echo -e "\n${BLUE}"Sorting finished. Results in imageInfo.txt"${NC}"
     fi
   fi
 }
