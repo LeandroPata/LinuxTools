@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+if [ $EUID = 0 ]; then
+  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else
+  USER_HOME=$HOME
+  echo -e "\n${RED}Some configs may require root permission to backup!${NC}\n"
+fi
+
+CONFIGS=(
+  "$USER_HOME/.config/fastfetch/config.jsonc"
+  "$USER_HOME/.config/kitty/kitty.conf"
+  "/etc/locale.conf"
+  "/etc/dracut.conf.d/myflags.conf"
+  "$USER_HOME/.config/ohmyposh/myprofile.yaml"
+  "$USER_HOME/.zshrc"
+  "$USER_HOME/.config/ghostty/config"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userChrome.css"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userContent.css"
+  "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/natsumi-config.css"
+)
+
+if [[ $1 == '' ]]; then
+  CUR_DIR=$(pwd)
+else
+  CUR_DIR=$1
+fi
+
+CFGS=()
+#NEW_CFGS=()
+
+echo "$CUR_DIR"
+
+verifyCfgDir() {
+  for configDir in "${CONFIGS[@]}"; do
+    if [ "$1" == "$(basename "$(dirname "$configDir")")" ] || [ "$1" == "user" ]; then
+      #basename "$(dirname "$configDir")"
+      return
+    else
+
+      continue
+    fi
+  done
+  false
+}
+
+verifyCfg() {
+  for configDir in "${CONFIGS[@]}"; do
+    if [ "$1" == "$(basename "$configDir")" ]; then
+      echo "$configDir"
+      return
+    elif [ ".$1" == "$(basename "$configDir")" ]; then
+      echo "$configDir"
+      return
+    else
+      continue
+    fi
+  done
+  false
+}
+
+# addNewConfigs() {
+#   newDir=$1
+#   if [[ -d newDir ]]; then
+#     for file in "${newDir[@]}"; do
+#       addNewConfigs "$file"
+#     done
+#   elif [[ -f $newDir ]]; then
+#     NEW_CFGS+=("$newDir")
+#   fi
+# }
+
+if ! [[ -d $CUR_DIR ]]; then
+  echo -e "${RED}\nNot a valid directory!${NC}"
+  exit 1
+fi
+
+for dir in "$CUR_DIR"/*; do
+  if ! [[ -d $dir ]]; then
+    continue
+  fi
+
+  verifyCfgDir "$(basename "$dir")"
+  cfgDirCheck=$?
+  if ! [ $cfgDirCheck -eq 0 ]; then
+    continue
+  fi
+
+  for file in "$dir"/*; do
+    #basename "$file"
+
+    verifyCfgFile=$(verifyCfg "$(basename "$file")")
+    #echo "$verifyCfgFile"
+    if [ "$verifyCfgFile" == '' ]; then
+      continue
+    fi
+    CFGS+=("$verifyCfgFile")
+  done
+done
+
+if [ ${#CFGS[@]} -eq 0 ]; then
+  echo -e "\n${RED}No configs were found. Quitting...${NC}"
+  exit 1
+fi
+
+printf "\n${GREEN}"
+
+for cfg in "${CFGS[@]}"; do
+  CFG_FOUND=/$(basename "$(dirname "$cfg")")/$(basename "$cfg")
+  echo "$CFG_FOUND"
+done
+
+echo -e "${BLUE}"
+read -n 1 -rp "These configs were found, update? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+  printf "\n"
+fi
+
+if ! [ "$prompt" == y ] && [ -n "$prompt" ]; then
+  echo -e "\n${RED}Quitting...${NC}"
+  exit 1
+fi
+
+echo -e "\n${BLUE}Updating configs...${NC}"
+
+for cfg in "${CFGS[@]}"; do
+
+  CUR_PATH="$CUR_DIR/$(basename "$(dirname "$cfg")")/$(basename "$cfg")"
+  CFG_NAME=$(basename "$cfg")
+
+  if [[ "$CFG_NAME" == .* ]]; then
+    CFG_NAME="${CFG_NAME#?}"
+  fi
+
+  if [ "$(dirname "$cfg")" == "$USER_HOME" ]; then
+    CUR_PATH="$CUR_DIR/user/$CFG_NAME"
+  fi
+
+  cp "$CUR_PATH" "$cfg"
+done
+
+echo -e "\n${GREEN}Updating finished${NC}"

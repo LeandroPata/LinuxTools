@@ -52,7 +52,7 @@ if ! [ "$prompt" == y ] && [ -n "$prompt" ]; then
   exit 1
 fi
 
-echo -e "\n${BLUE}Updating scripts${NC}"
+echo -e "\n${BLUE}Updating scripts...${NC}"
 
 for defScript in "${SCRIPTS[@]}"; do
   FILE_NAME=$(basename "$defScript")
