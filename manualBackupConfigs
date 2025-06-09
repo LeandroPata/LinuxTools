@@ -27,7 +27,7 @@ CONFIGS=(
   "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/natsumi-config.css"
 )
 
-DEST_FOLDER="$USER_HOME/Dev/Linux/Config"
+DEST_FOLDER="$USER_HOME/Dev/Linux/Config/$(hostname)"
 
 echo -e "${BLUE}Creating $DEST_FOLDER if it doesn't exist"
 mkdir -pv "$DEST_FOLDER"
