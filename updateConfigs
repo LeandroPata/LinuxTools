@@ -32,6 +32,7 @@ else
 fi
 
 CFGS=()
+DIR_LIST=()
 
 verifyCfgDir() {
   for configDir in "${CONFIGS[@]}"; do
@@ -67,6 +68,31 @@ if ! [[ -d $CUR_DIR ]]; then
 fi
 
 for dir in "$CUR_DIR"/*; do
+  if [ -d "$dir" ]; then
+    DIR_LIST+=("$dir")
+  fi
+done
+
+if [ ${#DIR_LIST[@]} -eq 0 ]; then
+  echo -e "${RED}\nNo valid directories found!${NC}"
+  exit 1
+elif [ ${#DIR_LIST[@]} -eq 1 ]; then
+  BASE_DIR=${DIR_LIST[0]}
+else
+  printf "\n${BLUE}Select the hostname folder from which you wish to update the configs from:${NC}\n"
+
+  select dir in "${DIR_LIST[@]}" Quit; do
+    if [ "$dir" == "Quit" ]; then
+      echo -e "\n${RED}Quitting...${NC}"
+      exit 1
+    elif [ -d "$dir" ]; then
+      BASE_DIR="$dir"
+      break
+    fi
+  done
+fi
+
+for dir in "$BASE_DIR"/*; do
   if ! [[ -d $dir ]]; then
     continue
   fi
@@ -102,7 +128,7 @@ for cfg in "${CFGS[@]}"; do
 done
 
 echo -e "${BLUE}"
-read -n 1 -rp "These configs were found, update? [Y/n] " prompt
+read -n 1 -rp "These configs were found in $BASE_DIR, update? [Y/n] " prompt
 
 # Convert input to lowercase
 prompt=${prompt,,}
