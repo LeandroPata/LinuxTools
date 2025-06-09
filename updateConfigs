@@ -81,10 +81,13 @@ elif [ ${#DIR_LIST[@]} -eq 1 ]; then
 else
   printf "\n${BLUE}Select the hostname folder from which you wish to update the configs from:${NC}\n"
 
-  select dir in "${DIR_LIST[@]}" Quit; do
+  select dir in "${DIR_LIST[@]}" "Current Folder" "Quit"; do
     if [ "$dir" == "Quit" ]; then
       echo -e "\n${RED}Quitting...${NC}"
       exit 1
+    elif [ "$dir" == "Current Folder" ]; then
+      BASE_DIR=$CUR_DIR
+      break
     elif [ -d "$dir" ]; then
       BASE_DIR="$dir"
       break
