@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # The intention is to make this into a cronjob or systemd timer to run periodically
 # This script is a short-term solution
+# This has been done in backupConfigs
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'

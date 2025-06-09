@@ -6,25 +6,19 @@ These tools were created to help improve my own personal Linux experience, so th
 
 My system runs Arch based EndeavourOs, with a KDE Plasma 6 desktop environment, along with a systemd-boot bootloader.
 
-I expect most of these tools should work at least for those running an Arch based Linux system just fine, but no testing other than on my own system was made. Use them at your own risk.
+I expect most of these tools should work at least for those running an Arch based Linux system just fine, but no testing other than on my own system was made. Also not sure how they'll behave on systems with multiple users. Use them at your own risk.
 
 ## ManualBackupConfigs
 
 Backs up the specified configs (or other files) into the a designated folder.
 
 - CONFIG variable designates the desired configs (or other files to backup);
-- DEST_FOLDER parameter designates the desired folder to backup the configs to (otherwise it will be set as the current folder);
+- DEST_FOLDER parameter designates the desired folder to backup the configs to;
 
 Example execution:
 
 ```
 ./manualBackupConfigs
-```
-
-Or
-
-```
-./manualBackupConfigs path/to/folder
 ```
 
 ## BackupConfigs
