@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if ! (pidof wofi); then
+  wofi
+fi
