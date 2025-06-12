@@ -15,6 +15,8 @@ CONFIGS=(
   "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userChrome.css"
   "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/userContent.css"
   "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/natsumi-config.css"
+  "$USER_HOME/.config/wofi/config"
+  "$USER_HOME/.config/wofi/style.css"
 )
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config/$(hostname)"
