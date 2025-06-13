@@ -8,7 +8,7 @@ My system runs Arch based EndeavourOs, with a KDE Plasma 6 desktop environment, 
 
 I expect most of these tools should work at least for those running an Arch based Linux system just fine, but no testing other than on my own system was made. Also not sure how they'll behave on systems with multiple users. Use them at your own risk.
 
-## ManualBackupConfigs
+## manualBackupConfigs
 
 Backs up the specified configs (or other files) into the a designated folder.
 
@@ -21,7 +21,7 @@ Example execution:
 ./manualBackupConfigs
 ```
 
-## BackupConfigs
+## backupConfigs
 
 Same as ManualBackupConfigs, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
 
@@ -45,7 +45,7 @@ sudo systemctl start backup-configs.timer
 sudo systemctl list-timers # optional, just to check if the timer has been activated
 ```
 
-## BootOptimizations
+## bootOptimizations
 
 Boot optimizations I have personally done to my machine to improve boot times.
 
@@ -53,7 +53,7 @@ It was not intended to be executed as is, and, while it can be, it's not recomme
 
 An explanation of any commands contained is provided as a comment in the script.
 
-## GetInstalledPackages
+## getInstalledPackages
 
 Outputs a text file containing all currently installed packages, both through pacman and the AUR.
 
@@ -62,15 +62,21 @@ Careful when using it to reinstall packages, as it also includes distro specific
 - DEST_FOLDER parameter designates the desired folder to output the file to (otherwise it will be set as the current folder);
 - DEST_FILE variable designated the desired text file name (and possibly extension, though that wasn't tested);
 
-## GlobalizeScripts
+## globalizeScripts
 
 Makes the selected scripts from the current directory global (copies them into /usr/bin), to make them executable anywhere in the system instead of only on the folder they're contained in.
 
-## PrepareSystemD
+## open-wofi
+
+Simple script to only open wofi if it isn't currently already open.
+
+Intended to be used when assigned to a keybind.
+
+## prepareSystemD
 
 Script to reinstall kernels, copied from [this tutorial when switching to systemd-boot](https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290)
 
-## SortImages
+## sortImages
 
 Sorts images in a folder (recursively, includes images within subfolders) by pixel amount and exports the sorted list to text file in the current folder.
 
@@ -96,7 +102,7 @@ Or
 ./sortImages path/to/image
 ```
 
-## ManualSystemCleaning
+## manualSystemCleaning
 
 Automates some of the maintenance that should be done to keep the machine 'healthy', so that only the script needs to be executed instead of the individual commands.
 
@@ -107,13 +113,13 @@ Automates some of the maintenance that should be done to keep the machine 'healt
 - DEST_FOLDER parameter designates the desired folder to output the file to (otherwise it will be set as the current folder);
 - DEST_FILE variable designated the desired text file name (and possibly extension, though that wasn't tested)
 
-## SystemCleaning
+## systemCleaning
 
 Same as ManualSystemCleaning, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff). Also removed orphan packages removal, as their removal could possibly be problematic and should be done carefully.
 
 Use with systemCleaning.service and systemCleaning.timer to automate.
 
-## SystemCleaning.service and SystemCleaning.timer
+## systemCleaning.service and systemCleaning.timer
 
 Automates systemCleaning execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
@@ -131,7 +137,7 @@ sudo systemctl start systemCleaning.timer
 sudo systemctl list-timers # optional, just to check if the timer has been activated
 ```
 
-## UpdateConfigs
+## updateConfigs
 
 Checks if the configs contained in the directory provided are in the list and prompts the user if they should be updated.
 
@@ -150,7 +156,7 @@ Or
 ./updateConfigs path/to/folder
 ```
 
-## UpdateGlobalScripts
+## updateGlobalScripts
 
 Checks if the scripts contained in the directory provided are global (exist in /usr/bin) and prompts the user if they should be updated.
 
@@ -168,7 +174,7 @@ Or
 ./updateGlobalScripts path/to/folder
 ```
 
-## ManualUpdateMirrorlist
+## manualUpdateMirrorlist
 
 Automates updating the mirrorlists, so that only the script needs to be executed instead of the individual commands.
 
@@ -176,13 +182,13 @@ Automates updating the mirrorlists, so that only the script needs to be executed
 - Updates EndeavourOs mirrorlist
 - Updates system (yay -Syyu)
 
-## UpdateMirrorlist
+## updateMirrorlist
 
 Same as ManualUpdateMirrorlist, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
 
 Use with updateMirrorlist.service and updateMirrorlist.timer to automate.
 
-## UpdateMirrorlist.service and UpdateMirrorlist.timer
+## updateMirrorlist.service and updateMirrorlist.timer
 
 Automates updateMirrorlist execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
