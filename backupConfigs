@@ -17,6 +17,10 @@ CONFIGS=(
   "$USER_HOME/.zen/tizo6sbm.Default (release)/chrome/natsumi-config.css"
   "$USER_HOME/.config/wofi/config"
   "$USER_HOME/.config/wofi/style.css"
+  "$USER_HOME/.config/yazi/init.lua"
+  "$USER_HOME/.config/yazi/keymap.toml"
+  "$USER_HOME/.config/yazi/theme.toml"
+  "$USER_HOME/.config/yazi/yazi.toml"
 )
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config/$(hostname)"
