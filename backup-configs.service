@@ -3,7 +3,7 @@ Description=Service to backup configs
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash /usr/bin/backupConfigs
+ExecStart=/usr/bin/bash /usr/bin/autoBackupConfigs
 
 [Install]
 WantedBy=multi-user.target

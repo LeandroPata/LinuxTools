@@ -3,7 +3,7 @@ Description=Service to update mirrorlists
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash /usr/bin/updateMirrorlist
+ExecStart=/usr/bin/bash /usr/bin/autoUpdateMirrorlist
 
 [Install]
 WantedBy=multi-user.target

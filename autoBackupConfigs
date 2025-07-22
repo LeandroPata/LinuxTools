@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
-# The intention is to make this into a cronjob or systemd timer to run periodically
-# This script is a short-term solution
-# This has been done in backupConfigs
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+admin="$(id -nu 1000)"
 
-if [ $EUID = 0 ]; then
-  USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
-else
-  USER_HOME=$HOME
-  echo -e "\n${RED}Some configs may require root permission to backup!${NC}\n"
-fi
+USER_HOME=/home/$admin
 
 CONFIGS=(
   "$USER_HOME/.config/fastfetch/config.jsonc"
@@ -36,12 +25,10 @@ CONFIGS=(
 
 DEST_FOLDER="$USER_HOME/Dev/Linux/Config/$(hostname)"
 
-echo -e "${BLUE}Creating $DEST_FOLDER if it doesn't exist"
-mkdir -pv "$DEST_FOLDER"
-chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"
+mkdir -p "$DEST_FOLDER"
+chown "$admin":"$admin" "$DEST_FOLDER"
 
 # Backing up configs
-echo -e "\n${BLUE}Backing up configs to $DEST_FOLDER${RED}\n"
 
 for config in "${CONFIGS[@]}"; do
   if ! [[ -f $config ]]; then
@@ -58,20 +45,14 @@ for config in "${CONFIGS[@]}"; do
   # This check is to make dot files (hidden files) visible
   if [[ $FILE_NAME == .* ]]; then
     FILE_NAME="${FILE_NAME#?}"
-    # echo "$FILE_NAME"
   fi
 
   # This check is to make dot folders (hidden folders) visible
   if [[ $FILE_DIR == .* ]]; then
     FILE_DIR="${FILE_DIR#?}"
-    # echo "$FILE_NAME"
   fi
 
-  printf "${NC}"
-  mkdir -pv "$DEST_FOLDER"/"$FILE_DIR"
-  chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$FILE_DIR"
-  printf "${RED}"
+  mkdir -p "$DEST_FOLDER"/"$FILE_DIR"
+  chown "$admin":"$admin" "$DEST_FOLDER"/"$FILE_DIR"
   cp "$config" "$DEST_FOLDER"/"$FILE_DIR"/"$FILE_NAME"
 done
-
-echo -e "\n${GREEN}Finished backing up configs${NC}"
