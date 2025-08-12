@@ -1,0 +1,9 @@
+[Unit]
+Description=Service to backup installed packages
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/bin/autoGetInstalledPackages
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+admin="$(id -nu 1000)"
+
+USER_HOME=/home/$admin
+
+DEST_FOLDER="$USER_HOME/Dev/Linux/Config/$(hostname)"
+
+mkdir -p "$DEST_FOLDER"
+chown "$admin":"$admin" "$DEST_FOLDER"
+
+DEST_FILE="installedPackages.txt"
+
+mkdir -p "$DEST_FOLDER"
+chown "$admin":"$admin" "$DEST_FOLDER"
+
+pacman -Qqe >"$DEST_FOLDER"/"$DEST_FILE"
+chown "$admin":"$admin" "$DEST_FOLDER"/"$DEST_FILE"
