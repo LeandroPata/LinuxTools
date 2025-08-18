@@ -129,7 +129,7 @@ if [ "$prompt" == y ] || [ -z "$prompt" ]; then
   pacman -Qdtq >"$DEST_FOLDER"/"$DEST_FILE"
   chown "$SUDO_USER":"$SUDO_USER" "$DEST_FOLDER"/"$DEST_FILE"
   echo -e "\n${GREEN}Saved orphan packages to file${NC}\n"
-  pacman -Rns "$(pacman -Qdtq)"
+  pacman -Rns $(pacman -Qdtq)
   echo -e "\n${GREEN}Finished cleaning"
 fi
 
