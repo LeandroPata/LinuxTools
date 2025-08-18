@@ -8,7 +8,7 @@ My system runs Arch based EndeavourOs, with a KDE Plasma 6 desktop environment, 
 
 I expect most of these tools should work at least for those running an Arch based Linux system just fine, but no testing other than on my own system was made. Also not sure how they'll behave on systems with multiple users. Use them at your own risk.
 
-## manualBackupConfigs
+## backupConfigs
 
 Backs up the specified configs (or other files) into the a designated folder.
 
@@ -18,12 +18,12 @@ Backs up the specified configs (or other files) into the a designated folder.
 Example execution:
 
 ```
-./manualBackupConfigs
+./backupConfigs
 ```
 
-## backupConfigs
+## autoBackupConfigs
 
-Same as ManualBackupConfigs, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+Same as backupConfigs, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
 
 Use with backup-configs.service and backup-configs.timer to automate.
 
@@ -33,7 +33,7 @@ Automates backupConfigs execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
 
 ```
-/usr/bin/backupConfigs should be changed to whatever is your backupConfigs script path
+/usr/bin/autoBackupConfigs should be changed to whatever is your autoBackupConfigs script path
 ```
 
 To activate the timer:
@@ -61,6 +61,30 @@ Careful when using it to reinstall packages, as it also includes distro specific
 
 - DEST_FOLDER parameter designates the desired folder to output the file to (otherwise it will be set as the current folder);
 - DEST_FILE variable designated the desired text file name (and possibly extension, though that wasn't tested);
+
+## autoGetInstalledPackages
+
+Same as getInstalledPackages, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+
+Use with getInstalledPackages.service and getInstalledPackages.timer to automate.
+
+## getInstalledPackages.service and getInstalledPackages.timer
+
+Automates getInstalledPackages execution and executes the script once a month.
+Should be placed in /etc/systemd/system/
+
+```
+/usr/bin/autoGetInstalledPackages should be changed to whatever is your autoGetInstalledPackages script path
+```
+
+To activate the timer:
+
+```
+systemctl daemon-reload
+sudo systemctl enable getInstalledPackages.timer
+sudo systemctl start getInstalledPackages.timer
+sudo systemctl list-timers # optional, just to check if the timer has been activated
+```
 
 ## globalizeScripts
 
@@ -102,7 +126,7 @@ Or
 ./sortImages path/to/image
 ```
 
-## manualSystemCleaning
+## systemCleaning
 
 Automates some of the maintenance that should be done to keep the machine 'healthy', so that only the script needs to be executed instead of the individual commands.
 
@@ -113,9 +137,9 @@ Automates some of the maintenance that should be done to keep the machine 'healt
 - DEST_FOLDER parameter designates the desired folder to output the file to (otherwise it will be set as the current folder);
 - DEST_FILE variable designated the desired text file name (and possibly extension, though that wasn't tested)
 
-## systemCleaning
+## autoSystemCleaning
 
-Same as ManualSystemCleaning, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff). Also removed orphan packages removal, as their removal could possibly be problematic and should be done carefully.
+Same as systemCleaning, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff). Also removed orphan packages removal, as their removal could possibly be problematic and should be done carefully.
 
 Use with systemCleaning.service and systemCleaning.timer to automate.
 
@@ -125,7 +149,7 @@ Automates systemCleaning execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
 
 ```
-/usr/bin/systemCleaning should be changed to whatever is your systemCleaning script path
+/usr/bin/autoSystemCleaning should be changed to whatever is your autoSystemCleaning script path
 ```
 
 To activate the timer:
@@ -174,7 +198,7 @@ Or
 ./updateGlobalScripts path/to/folder
 ```
 
-## manualUpdateMirrorlist
+## updateMirrorlist
 
 Automates updating the mirrorlists, so that only the script needs to be executed instead of the individual commands.
 
@@ -182,9 +206,9 @@ Automates updating the mirrorlists, so that only the script needs to be executed
 - Updates EndeavourOs mirrorlist
 - Updates system (yay -Syyu)
 
-## updateMirrorlist
+## autoUpdateMirrorlist
 
-Same as ManualUpdateMirrorlist, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+Same as updateMirrorlist, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
 
 Use with updateMirrorlist.service and updateMirrorlist.timer to automate.
 
@@ -194,7 +218,7 @@ Automates updateMirrorlist execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
 
 ```
-/usr/bin/updateMirrorlist should be changed to whatever is your updateMirrorlist script path
+/usr/bin/autoUpdateMirrorlist should be changed to whatever is your autoUpdateMirrorlist script path
 ```
 
 To activate the timer:
