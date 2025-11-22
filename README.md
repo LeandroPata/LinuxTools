@@ -17,7 +17,7 @@ Backs up the specified configs (or other files) into the a designated folder.
 
 Example execution:
 
-```
+```shell
 ./backupConfigs
 ```
 
@@ -32,13 +32,13 @@ Use with backup-configs.service and backup-configs.timer to automate.
 Automates backupConfigs execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
 
-```
+```shell
 /usr/bin/autoBackupConfigs should be changed to whatever is your autoBackupConfigs script path
 ```
 
 To activate the timer:
 
-```
+```shell
 systemctl daemon-reload
 sudo systemctl enable backup-configs.timer
 sudo systemctl start backup-configs.timer
@@ -73,13 +73,13 @@ Use with getInstalledPackages.service and getInstalledPackages.timer to automate
 Automates getInstalledPackages execution and executes the script once a week.
 Should be placed in /etc/systemd/system/
 
-```
+```shell
 /usr/bin/autoGetInstalledPackages should be changed to whatever is your autoGetInstalledPackages script path
 ```
 
 To activate the timer:
 
-```
+```shell
 systemctl daemon-reload
 sudo systemctl enable getInstalledPackages.timer
 sudo systemctl start getInstalledPackages.timer
@@ -100,6 +100,35 @@ Intended to be used when assigned to a keybind.
 
 Script to reinstall kernels, copied from [this tutorial when switching to systemd-boot](https://forum.endeavouros.com/t/tutorial-convert-to-systemd-boot/13290)
 
+## sortAudio
+
+Sorts audio files in a folder (recursively, includes files within subfolders) into album folders and (optionally) artist folders.
+
+- The intended folder can be defined by a parameter (otherwise it's the current folder);
+- The provided path can be for a directory or a file;
+- Accepts only audio files (checked by mime type);
+- Additionally the files need to be properly tagged with at least the 'Album' tag (and the 'Artist' case to sort into artist folders);
+- The sorted folders can be either all moved to the root folder (the provided path) or the sorted folders can be created in the audio file's current location;
+- Unfortunately, if a track has multiple artists, the artist folder will also include all the artists, leading to album tracks becoming separated (will consider using 'Album Artist' tag instead, as it might be more reliable, and use only the 'Artist' tag as a fallback);
+
+Example execution:
+
+```shell
+./sortAudio
+```
+
+Or
+
+```shell
+./sortAudio path/to/folder
+```
+
+Or
+
+```shell
+./sortAudio path/to/audio
+```
+
 ## sortImages
 
 Sorts images in a folder (recursively, includes images within subfolders) by pixel amount and exports the sorted list to text file in the current folder.
@@ -110,19 +139,19 @@ Sorts images in a folder (recursively, includes images within subfolders) by pix
 
 Example execution:
 
-```
+```shell
 ./sortImages
 ```
 
 Or
 
-```
+```shell
 ./sortImages path/to/folder
 ```
 
 Or
 
-```
+```shell
 ./sortImages path/to/image
 ```
 
@@ -148,13 +177,13 @@ Use with systemCleaning.service and systemCleaning.timer to automate.
 Automates systemCleaning execution and executes the script once a week.
 Should be placed in /etc/systemd/system/
 
-```
+```shell
 /usr/bin/autoSystemCleaning should be changed to whatever is your autoSystemCleaning script path
 ```
 
 To activate the timer:
 
-```
+```shell
 systemctl daemon-reload
 sudo systemctl enable systemCleaning.timer
 sudo systemctl start systemCleaning.timer
@@ -170,13 +199,13 @@ Checks if the configs contained in the directory provided are in the list and pr
 
 Example execution:
 
-```
+```shell
 ./updateConfigs
 ```
 
 Or
 
-```
+```shell
 ./updateConfigs path/to/folder
 ```
 
@@ -188,13 +217,13 @@ Checks if the scripts contained in the directory provided are global (exist in /
 
 Example execution:
 
-```
+```shell
 ./updateGlobalScripts
 ```
 
 Or
 
-```
+```shell
 ./updateGlobalScripts path/to/folder
 ```
 
@@ -217,13 +246,13 @@ Use with updateMirrorlist.service and updateMirrorlist.timer to automate.
 Automates updateMirrorlist execution and executes the script once a month.
 Should be placed in /etc/systemd/system/
 
-```
+```shell
 /usr/bin/autoUpdateMirrorlist should be changed to whatever is your autoUpdateMirrorlist script path
 ```
 
 To activate the timer:
 
-```
+```shell
 systemctl daemon-reload
 sudo systemctl enable updateMirrorlist.timer
 sudo systemctl start updateMirrorlist.timer
