@@ -23,8 +23,8 @@ SCRIPTS=()
 for file in "$CUR_DIR"/*; do
   FILE_NAME=$(basename "$file")
 
-  if [ -f "/usr/bin/$FILE_NAME" ]; then
-    #echo "/usr/bin/$FILE_NAME" exists
+  if [ -f "/usr/bin/$FILE_NAME" ] && [ "$(cmp "/usr/bin/$FILE_NAME" "$file")" ]; then
+    #echo "/usr/bin/$FILE_NAME" exists and is different
     SCRIPTS+=("$file")
   fi
 done
