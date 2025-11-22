@@ -70,7 +70,7 @@ Use with getInstalledPackages.service and getInstalledPackages.timer to automate
 
 ## getInstalledPackages.service and getInstalledPackages.timer
 
-Automates getInstalledPackages execution and executes the script once a month.
+Automates getInstalledPackages execution and executes the script once a week.
 Should be placed in /etc/systemd/system/
 
 ```
@@ -145,7 +145,7 @@ Use with systemCleaning.service and systemCleaning.timer to automate.
 
 ## systemCleaning.service and systemCleaning.timer
 
-Automates systemCleaning execution and executes the script once a month.
+Automates systemCleaning execution and executes the script once a week.
 Should be placed in /etc/systemd/system/
 
 ```
@@ -208,7 +208,7 @@ Automates updating the mirrorlists, so that only the script needs to be executed
 
 ## autoUpdateMirrorlist
 
-Same as updateMirrorlist, but with changes to permit execution by a systemd service (removed prompts and unnecessary stuff).
+Same as updateMirrorlist, but with changes to permit execution by a systemd service (removed prompts, automatically updating the system, as it could lead to problems, and other unnecessary stuff).
 
 Use with updateMirrorlist.service and updateMirrorlist.timer to automate.
 
