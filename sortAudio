@@ -69,20 +69,38 @@ else
 	DEST=$1
 fi
 
-# I don't like having parameters like this, might change into prompts
-if [ "$2" == 'true' ]; then
+echo -e "${BLUE}"
+read -n 1 -rp "Sort files to root path? (Default is sorting to the file's current folder) [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+	printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
 	PARENT=true
 fi
 
-if [ "$3" == 'true' ]; then
+echo -e "${BLUE}"
+read -n 1 -rp "Sort files into artist folders as well? (Default is only into album folders) [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+	printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
 	ARTIST=true
 fi
 
-echo "$PARENT"
-echo "$ARTIST"
-
 isDir "$DEST"
 TYPE=$?
-echo -e "\n${BLUE}"Sorting through "$DEST"..."${RED}"
+echo -e "\n${BLUE}"Sorting through "$DEST"..."${NC}\n"
 handleType "$TYPE" "$PARENT" "$ARTIST" "$DEST"
-echo -e "\n${BLUE}"Sorting finished."${NC}"
+echo -e "\n${GREEN}"Sorting finished."${NC}"
