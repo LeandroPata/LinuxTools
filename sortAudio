@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Check if it is a directory, file or invalid
+isDir() {
+	if [[ -d $1 ]]; then
+		# This is a directory
+		return 1
+	elif [[ -f $1 ]]; then
+		# This is a file
+		return 2
+	else
+		# This is invalid
+		return 0
+	fi
+}
+
+# Handles logic according to the file type
+handleType() {
+	# If it is a directory, then go through the directory to check for files
+	# or directories
+	if [ "$1" -eq 1 ]; then
+		for file in "$4"/*; do
+			isDir "$file"
+			TYPE=$?
+			handleType "$TYPE" "$PARENT" "$ARTIST" "$file"
+		done
+
+	# If it is a file, check if it is an image
+	elif [ "$1" -eq 2 ]; then
+		MimeType=$(file "$4" --mime-type -b)
+
+		# If it is an audio, print its information
+		if [[ "$MimeType" == audio/* ]]; then
+			AlbumTag=("$(ffprobe -v quiet -show_entries format_tags=album -of default=nw=1:nk=1 "$4")")
+			ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=artist -of default=nw=1:nk=1 "$4")")
+
+			if [ "${AlbumTag[0]}" == '' ]; then
+				AlbumTag=("$(ffprobe -v quiet -show_entries stream_tags=album -of default=nw=1:nk=1 "$4")")
+				ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=artist -of default=nw=1:nk=1 "$4")")
+			fi
+
+			if [ "$(basename "$(dirname "$4")")" != "${AlbumTag[0]}" ]; then
+				if [ "$PARENT" = true ] && [ "$ARTIST" = true ]; then
+					FOLDER="$DEST"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+				elif [ "$PARENT" = true ]; then
+					FOLDER="$DEST"/"${AlbumTag[0]}"
+				elif [ "$ARTIST" = true ]; then
+					FOLDER="$(dirname "$4")"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+				else
+					FOLDER="$(dirname "$4")"/"${AlbumTag[0]}"
+				fi
+				mkdir -pv "$FOLDER"
+				chown "$SUDO_USER":"$SUDO_USER" "$FOLDER"
+				mv "$4" "$FOLDER" >/dev/null 2>&1
+
+			fi
+		fi
+	fi
+}
+
+if [ "$1" == '' ]; then
+	DEST=$(pwd)
+else
+	DEST=$1
+fi
+
+# I don't like having parameters like this, might change into prompts
+if [ "$2" == 'true' ]; then
+	PARENT=true
+fi
+
+if [ "$3" == 'true' ]; then
+	ARTIST=true
+fi
+
+echo "$PARENT"
+echo "$ARTIST"
+
+isDir "$DEST"
+TYPE=$?
+echo -e "\n${BLUE}"Sorting through "$DEST"..."${RED}"
+handleType "$TYPE" "$PARENT" "$ARTIST" "$DEST"
+echo -e "\n${BLUE}"Sorting finished."${NC}"
