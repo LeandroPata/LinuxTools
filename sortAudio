@@ -27,7 +27,7 @@ handleType() {
 		for file in "$4"/*; do
 			isDir "$file"
 			TYPE=$?
-			handleType "$TYPE" "$PARENT" "$ARTIST" "$file"
+			handleType "$TYPE" "$ROOT" "$ARTIST" "$file"
 		done
 
 	# If it is a file, check if it is an image
@@ -37,17 +37,35 @@ handleType() {
 		# If it is an audio, print its information
 		if [[ "$MimeType" == audio/* ]]; then
 			AlbumTag=("$(ffprobe -v quiet -show_entries format_tags=album -of default=nw=1:nk=1 "$4")")
-			ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=artist -of default=nw=1:nk=1 "$4")")
+			ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=album_artist -of default=nw=1:nk=1 "$4")")
 
 			if [ "${AlbumTag[0]}" == '' ]; then
 				AlbumTag=("$(ffprobe -v quiet -show_entries stream_tags=album -of default=nw=1:nk=1 "$4")")
-				ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=artist -of default=nw=1:nk=1 "$4")")
+				ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=album_artist -of default=nw=1:nk=1 "$4")")
 			fi
 
-			if [ "$(basename "$(dirname "$4")")" != "${AlbumTag[0]}" ]; then
-				if [ "$PARENT" = true ] && [ "$ARTIST" = true ]; then
+			if [ "${ArtistTag[0]}" == '' ]; then
+				ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=artist -of default=nw=1:nk=1 "$4")")
+				if [ "${ArtistTag[0]}" == '' ]; then
+					ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=artist -of default=nw=1:nk=1 "$4")")
+				fi
+			fi
+
+			PARENT="$(basename "$(dirname "$4")")"
+
+			if [ "$ARTIST" = true ] && [ "$(basename "$(dirname "$PARENT")")" != "${ArtistTag[0]}" ]; then
+				if [ "$ROOT" = true ]; then
 					FOLDER="$DEST"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
-				elif [ "$PARENT" = true ]; then
+				else
+					FOLDER="$(dirname "$4")"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+				fi
+				mkdir -pv "$FOLDER"
+				chown "$SUDO_USER":"$SUDO_USER" "$FOLDER"
+				mv "$4" "$FOLDER" >/dev/null 2>&1
+			elif [ "$PARENT" != "${AlbumTag[0]}" ]; then
+				if [ "$ROOT" = true ] && [ "$ARTIST" = true ]; then
+					FOLDER="$DEST"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+				elif [ "$ROOT" = true ]; then
 					FOLDER="$DEST"/"${AlbumTag[0]}"
 				elif [ "$ARTIST" = true ]; then
 					FOLDER="$(dirname "$4")"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
@@ -57,7 +75,6 @@ handleType() {
 				mkdir -pv "$FOLDER"
 				chown "$SUDO_USER":"$SUDO_USER" "$FOLDER"
 				mv "$4" "$FOLDER" >/dev/null 2>&1
-
 			fi
 		fi
 	fi
@@ -81,7 +98,7 @@ if [[ -n "$prompt" ]]; then
 fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
-	PARENT=true
+	ROOT=true
 fi
 
 echo -e "${BLUE}"
@@ -102,5 +119,5 @@ fi
 isDir "$DEST"
 TYPE=$?
 echo -e "\n${BLUE}"Sorting through "$DEST"..."${NC}\n"
-handleType "$TYPE" "$PARENT" "$ARTIST" "$DEST"
+handleType "$TYPE" "$ROOT" "$ARTIST" "$DEST"
 echo -e "\n${GREEN}"Sorting finished."${NC}"

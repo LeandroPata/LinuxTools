@@ -107,9 +107,8 @@ Sorts audio files in a folder (recursively, includes files within subfolders) in
 - The intended folder can be defined by a parameter (otherwise it's the current folder);
 - The provided path can be for a directory or a file;
 - Accepts only audio files (checked by mime type);
-- Additionally the files need to be properly tagged with at least the 'Album' tag (and the 'Artist' case to sort into artist folders);
+- Additionally the files need to be properly tagged with at least the 'Album' tag (and the 'AlbumArtist' case to sort into artist folders);
 - The sorted folders can be either all moved to the root folder (the provided path) or the sorted folders can be created in the audio file's current location;
-- Unfortunately, if a track has multiple artists, the artist folder will also include all the artists, leading to album tracks becoming separated (will consider using 'Album Artist' tag instead, as it might be more reliable, and use only the 'Artist' tag as a fallback);
 
 Example execution:
 
