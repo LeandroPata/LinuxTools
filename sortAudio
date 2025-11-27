@@ -24,57 +24,92 @@ handleType() {
 	# If it is a directory, then go through the directory to check for files
 	# or directories
 	if [ "$1" -eq 1 ]; then
-		for file in "$4"/*; do
+		for file in "$2"/*; do
 			isDir "$file"
 			TYPE=$?
-			handleType "$TYPE" "$ROOT" "$ARTIST" "$file"
+			handleType "$TYPE" "$file" "$ROOT" "$ARTIST"
 		done
 
 	# If it is a file, check if it is an image
 	elif [ "$1" -eq 2 ]; then
-		MimeType=$(file "$4" --mime-type -b)
+		MimeType=$(file "$2" --mime-type -b)
 
 		# If it is an audio, print its information
 		if [[ "$MimeType" == audio/* ]]; then
-			AlbumTag=("$(ffprobe -v quiet -show_entries format_tags=album -of default=nw=1:nk=1 "$4")")
-			ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=album_artist -of default=nw=1:nk=1 "$4")")
+			AlbumTag=("$(ffprobe -v quiet -show_entries format_tags=album -of default=nw=1:nk=1 "$2")")
+			ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=album_artist -of default=nw=1:nk=1 "$2")")
+			DiscsTag=("$(ffprobe -v quiet -show_entries format_tags=totaldiscs -of default=nw=1:nk=1 "$2")")
+			DiscTag=("$(ffprobe -v quiet -show_entries format_tags=disc -of default=nw=1:nk=1 "$2")")
 
 			if [ "${AlbumTag[0]}" == '' ]; then
-				AlbumTag=("$(ffprobe -v quiet -show_entries stream_tags=album -of default=nw=1:nk=1 "$4")")
-				ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=album_artist -of default=nw=1:nk=1 "$4")")
+				AlbumTag=("$(ffprobe -v quiet -show_entries stream_tags=album -of default=nw=1:nk=1 "$2")")
+				ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=album_artist -of default=nw=1:nk=1 "$2")")
+				DiscsTag=("$(ffprobe -v quiet -show_entries stream_tags=totaldiscs -of default=nw=1:nk=1 "$2")")
+				DiscTag=("$(ffprobe -v quiet -show_entries stream_tags=disc -of default=nw=1:nk=1 "$2")")
 			fi
 
 			if [ "${ArtistTag[0]}" == '' ]; then
-				ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=artist -of default=nw=1:nk=1 "$4")")
+				ArtistTag=("$(ffprobe -v quiet -show_entries format_tags=artist -of default=nw=1:nk=1 "$2")")
 				if [ "${ArtistTag[0]}" == '' ]; then
-					ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=artist -of default=nw=1:nk=1 "$4")")
+					ArtistTag=("$(ffprobe -v quiet -show_entries stream_tags=artist -of default=nw=1:nk=1 "$2")")
 				fi
 			fi
 
-			PARENT="$(basename "$(dirname "$4")")"
+			# To prevent the creation of additional folders,
+			# I'll replace all "/" with "_"
+			AlbumTag="${AlbumTag[0]//\//_}"
+			ArtistTag="${ArtistTag[0]//\//_}"
+			echo "$AlbumTag"
+			echo "$ArtistTag"
 
-			if [ "$ARTIST" = true ] && [ "$(basename "$(dirname "$PARENT")")" != "${ArtistTag[0]}" ]; then
+			if [[ "$(basename "$(dirname "$2")" | tr '[:upper:]' '[:lower:]')" == disc* ]]; then
+				ALBUMFOLDER="$(basename "$(dirname "$(dirname "$2")")")"
+				ARTISTFOLDER="$(basename "$(dirname "$(dirname "$(dirname "$2")")")")"
+				DISCFOLDER="$(basename "$(dirname "$2")")"
+			else
+				ALBUMFOLDER="$(basename "$(dirname "$2")")"
+				ARTISTFOLDER="$(basename "$(dirname "$(dirname "$2")")")"
+				DISCFOLDER=""
+			fi
+
+			# echo "$ALBUMFOLDER"
+			# echo "$ARTISTFOLDER"
+			# echo "$DISCFOLDER"
+			FOLDER=""
+
+			if [[ 
+				"$ALBUMFOLDER" != "${AlbumTag[0]}" ||
+				("$ARTIST" = true && "$ARTISTFOLDER" != "${ArtistTag[0]}") ||
+				("$ARTIST" = false && "$ARTISTFOLDER" == "${ArtistTag[0]}") ||
+				("$DISCS" = true && "$DISCFOLDER" != "DISC ${DiscTag[0]}") ||
+				("$DISCS" = false && "$DISCFOLDER" == "DISC ${DiscTag[0]}") ]]; then
 				if [ "$ROOT" = true ]; then
-					FOLDER="$DEST"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+					isDir "$DEST"
+					TYPE=$?
+					if [ $TYPE -eq 1 ]; then
+						FOLDER="$DEST"
+					else
+						FOLDER="$(dirname "$DEST")"
+					fi
 				else
-					FOLDER="$(dirname "$4")"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
+					FOLDER="$(dirname "$2")"
 				fi
+
+				if [ "$ARTIST" = true ]; then
+					FOLDER="$FOLDER"/"${ArtistTag[0]}"
+				fi
+
+				FOLDER="$FOLDER"/"${AlbumTag[0]}"
+
+				if [ "$DISCS" = true ] && [ "${DiscsTag[0]}" -gt 1 ]; then
+					FOLDER="$FOLDER"/"DISC ${DiscTag[0]}"
+				fi
+			fi
+
+			if [ "$FOLDER" != "" ]; then
 				mkdir -pv "$FOLDER"
 				chown "$SUDO_USER":"$SUDO_USER" "$FOLDER"
-				mv "$4" "$FOLDER" >/dev/null 2>&1
-			elif [ "$PARENT" != "${AlbumTag[0]}" ]; then
-				if [ "$ROOT" = true ] && [ "$ARTIST" = true ]; then
-					FOLDER="$DEST"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
-				elif [ "$ROOT" = true ]; then
-					FOLDER="$DEST"/"${AlbumTag[0]}"
-				elif [ "$ARTIST" = true ]; then
-					FOLDER="$(dirname "$4")"/"${ArtistTag[0]}"/"${AlbumTag[0]}"
-				else
-					FOLDER="$(dirname "$4")"/"${AlbumTag[0]}"
-				fi
-				mkdir -pv "$FOLDER"
-				chown "$SUDO_USER":"$SUDO_USER" "$FOLDER"
-				mv "$4" "$FOLDER" >/dev/null 2>&1
+				mv "$2" "$FOLDER" >/dev/null 2>&1
 			fi
 		fi
 	fi
@@ -87,7 +122,7 @@ else
 fi
 
 echo -e "${BLUE}"
-read -n 1 -rp "Sort files to root path? (Default is sorting to the file's current folder) [Y/n] " prompt
+read -n 1 -rp "Sort files to root path? (N for sorting to the file's current folder) [Y/n] " prompt
 
 # Convert input to lowercase
 prompt=${prompt,,}
@@ -99,10 +134,12 @@ fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
 	ROOT=true
+else
+	ROOT=false
 fi
 
 echo -e "${BLUE}"
-read -n 1 -rp "Sort files into artist folders as well? (Default is only into album folders) [Y/n] " prompt
+read -n 1 -rp "Sort files into artist folders as well? (N for only into album folders) [Y/n] " prompt
 
 # Convert input to lowercase
 prompt=${prompt,,}
@@ -114,10 +151,29 @@ fi
 
 if [ "$prompt" == y ] || [ -z "$prompt" ]; then
 	ARTIST=true
+else
+	ARTIST=false
+fi
+
+echo -e "${BLUE}"
+read -n 1 -rp "Separate discs from albums into separate folders? [Y/n] " prompt
+
+# Convert input to lowercase
+prompt=${prompt,,}
+
+#Add extra \n if not empty due to "enter" inserting a newline
+if [[ -n "$prompt" ]]; then
+	printf "\n"
+fi
+
+if [ "$prompt" == y ] || [ -z "$prompt" ]; then
+	DISCS=true
+else
+	DISCS=false
 fi
 
 isDir "$DEST"
 TYPE=$?
 echo -e "\n${BLUE}"Sorting through "$DEST"..."${NC}\n"
-handleType "$TYPE" "$ROOT" "$ARTIST" "$DEST"
+handleType "$TYPE" "$DEST" "$ROOT" "$ARTIST" "$DISCS"
 echo -e "\n${GREEN}"Sorting finished."${NC}"
