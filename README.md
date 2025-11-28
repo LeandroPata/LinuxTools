@@ -102,12 +102,12 @@ Script to reinstall kernels, copied from [this tutorial when switching to system
 
 ## sortAudio
 
-Sorts audio files in a folder (recursively, includes files within subfolders) into album folders and (optionally) artist folders.
+Sorts audio files in a folder (recursively, includes files within subfolders) into album folders and (optionally) artist folders and discs folders.
 
 - The intended folder can be defined by a parameter (otherwise it's the current folder);
 - The provided path can be for a directory or a file;
 - Accepts only audio files (checked by mime type);
-- Additionally the files need to be properly tagged with at least the 'Album' tag (and the 'AlbumArtist' case to sort into artist folders);
+- Additionally the files need to be properly tagged with at least the 'Album' tag (and the 'AlbumArtist', 'TotalDiscs' and 'Discs' tags to optionally sort into artist and discs folders, respectively);
 - The sorted folders can be either all moved to the root folder (the provided path) or the sorted folders can be created in the audio file's current location;
 
 Example execution:
