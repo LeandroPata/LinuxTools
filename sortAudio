@@ -59,8 +59,6 @@ handleType() {
 			# I'll replace all "/" with "_"
 			AlbumTag="${AlbumTag[0]//\//_}"
 			ArtistTag="${ArtistTag[0]//\//_}"
-			echo "$AlbumTag"
-			echo "$ArtistTag"
 
 			if [[ "$(basename "$(dirname "$2")" | tr '[:upper:]' '[:lower:]')" == disc* ]]; then
 				ALBUMFOLDER="$(basename "$(dirname "$(dirname "$2")")")"
